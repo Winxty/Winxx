@@ -1,5 +1,5 @@
 
--- This is the loadstring      local WLoad = loadstring(game:HttpGet("https://raw.githubusercontent.com/Winxty/Winxx/refs/heads/main/WLoad"))()
+-- This is the loadstring      local Winxx = loadstring(game:HttpGet("https://raw.githubusercontent.com/Winxty/Winxx/refs/heads/main/WLoad"))()
 
 
 

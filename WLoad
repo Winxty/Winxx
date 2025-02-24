@@ -1,6 +1,6 @@
 local Wload = {}
 
-function PrintMessage(message)
+function Wload:PrintMessage(message)
     print("Message: " .. message)
 end
 

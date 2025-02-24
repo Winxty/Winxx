@@ -78,7 +78,6 @@ function Winxx:Wm()
         watermark.Size = UDim2.new(0, 469, 0, 30)
     
         local watermark1 = game.CoreGui.Gift.WaterMark
-        local player = game.Players.LocalPlaye
 
 end
 

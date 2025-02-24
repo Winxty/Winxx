@@ -3,21 +3,21 @@
 
 
 
-local Wload = {}
+local Winxx = {}
 
-function Wload:Help()
+function Winxx:Help()
+print("or the commands to work use ["Winxx:"] before them")
 print("command: FTLWT = Finds and prints the text you insert between the ()")
 print("command: Wm = Loads the Watermark")
 print("command: Wver = Literally just the version of Winxx")
+print("command: SayMessage = say the inserted text in chat")
 
 end
 
 local Wver = "1,0,0"
 
 
-
-
-function Wload:FTLWT(targetText)
+function Winxx:FTLWT(targetText)
 
     for _, obj in pairs(game.Players.LocalPlayer.PlayerGui:GetDescendants()) do
         if obj:IsA("TextLabel") and obj.Text == targetText then
@@ -32,7 +32,7 @@ end
 
 
 
-function Wload:Wm()
+function Winxx:Wm()
 
         local screenGui = Instance.new("ScreenGui")
         screenGui.Parent = game.CoreGui
@@ -59,8 +59,17 @@ end
 
 
 
-function Wload:PrintMessage(message)
-    print("Message: " .. message)
+function Winxx:SayMessage(message)
+
+
+local function SendChatMessage(message)
+    if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+        local textChannel = TextChatService.TextChannels.RBXGeneral
+        textChannel:SendAsync(message)
+    else
+        game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All")
+    end
+end 
 end
 
 return Wload

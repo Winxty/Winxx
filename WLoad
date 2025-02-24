@@ -40,7 +40,7 @@ function Winxx:Safe(Position)
     local pos = Instance.new("Value")
     pos.Name = "SafePosition"
     pos.Parent = game.Workspace.Winxxfuncs
-    pos.Value = Position
+    pos.Value = safep.Position
 end
 
 function Winxx:Wm()

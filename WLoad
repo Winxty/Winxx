@@ -6,7 +6,7 @@
 local Winxx = {}
 
 function Winxx:Help()
-print("or the commands to work use ["Winxx:"] before them")
+print("all of the commands to work use ["Winxx:"] before them")
 print("command: FTLWT = Finds and prints the text you insert between the ()")
 print("command: Wm = Loads the Watermark")
 print("command: Wver = Literally just the version of Winxx")

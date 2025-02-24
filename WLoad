@@ -1,43 +1,33 @@
 
--- This is the loadstring      local Winxx = loadstring(game:HttpGet("https://raw.githubusercontent.com/Winxty/Winxx/refs/heads/main/WLoad"))()
-
-
-
 local Winxx = {}
 
 function Winxx:Loadbsc()
     local winxxfold = Instance.new("Folder")
-        winxxfold.Name = "Winxxfuncs"
-        winxxfold.Parent = game.Workspace
+    winxxfold.Name = "Winxxfuncs"
+    winxxfold.Parent = game.Workspace
 end
 
 function Winxx:Help()
-print("all of the commands to work use Winxx: before them")
-print("command: FTLWT = Finds and prints the text you insert between the ()")
-print("command: Wm = Loads the Watermark")
-print("command: Wver = Literally just the version of Winxx")
-print("command: SayMessage = say the inserted text in chat")
-print("command: Safe = Spawn a safe part where u can stand on privately ")
-print("command: Loadbsc = Loads the needs for Winxx to work ")
-
+    print("all of the commands to work use Winxx: before them")
+    print("command: FTLWT = Finds and prints the text you insert between the ()")
+    print("command: Wm = Loads the Watermark")
+    print("command: Wver = Literally just the version of Winxx")
+    print("command: SayMessage = say the inserted text in chat")
+    print("command: Safe = Spawn a safe part where u can stand on privately")
+    print("command: Loadbsc = Loads the needs for Winxx to work")
 end
 
 local Wver = "1,0,0"
 
-
 function Winxx:FTLWT(targetText)
-
     for _, obj in pairs(game.Players.LocalPlayer.PlayerGui:GetDescendants()) do
         if obj:IsA("TextLabel") and obj.Text == targetText then
             print("Found TextLabel with text '" .. targetText .. "' at: " .. obj:GetFullName())
-            -- Optionally: Do something with the found TextLabel
             return obj  -- Returns the found TextLabel object
         end
     end
     print("TextLabel with text '" .. targetText .. "' not found.")
 end
-
-
 
 function Winxx:Safe(Position)
     local safep = Instance.new("Part")
@@ -47,54 +37,45 @@ function Winxx:Safe(Position)
     safep.Size = Vector3.new(50, 50, 50)
     safep.Parent = game.Workspace.Winxxfuncs
 
-
     local pos = Instance.new("Value")
     pos.Name = "SafePosition"
     pos.Parent = game.Workspace.Winxxfuncs
     pos.Value = Position
 end
 
-
-
-
-
 function Winxx:Wm()
-
-        local screenGui = Instance.new("ScreenGui")
-        screenGui.Parent = game.CoreGui
-        screenGui.Name = "Gift"
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Parent = game.CoreGui
+    screenGui.Name = "Gift"
     
-        local watermark = Instance.new("TextLabel")
-        watermark.Name = "WaterMark"
-        watermark.Parent = screenGui
-        watermark.TextColor3 = Color3.fromRGB(255, 255, 255)
-        watermark.TextTransparency = 0.7
-        watermark.Text = "[Winxx] Script by Winxx ofc"
-        watermark.AnchorPoint = Vector2.new(0.5, 0.5)
-        watermark.Font = Enum.Font.Gotham
-        watermark.BackgroundTransparency = 1
-        watermark.Position = UDim2.new(0.5, 0, 0.05, 0)
-        watermark.TextSize = 15
-        watermark.Size = UDim2.new(0, 469, 0, 30)
-    
-        local watermark1 = game.CoreGui.Gift.WaterMark
-
+    local watermark = Instance.new("TextLabel")
+    watermark.Name = "WaterMark"
+    watermark.Parent = screenGui
+    watermark.TextColor3 = Color3.fromRGB(255, 255, 255)
+    watermark.TextTransparency = 0.7
+    watermark.Text = "[Winxx] Script by Winxx ofc"
+    watermark.AnchorPoint = Vector2.new(0.5, 0.5)
+    watermark.Font = Enum.Font.Gotham
+    watermark.BackgroundTransparency = 1
+    watermark.Position = UDim2.new(0.5, 0, 0.05, 0)
+    watermark.TextSize = 15
+    watermark.Size = UDim2.new(0, 469, 0, 30)
 end
 
-
-
-
 function Winxx:SayMessage(message)
+    local TextChatService = game:GetService("TextChatService")  -- Fix: Define TextChatService
 
-
-local function SendChatMessage(message)
-    if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
-        local textChannel = TextChatService.TextChannels.RBXGeneral
-        textChannel:SendAsync(message)
-    else
-        game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All")
+    local function SendChatMessage(message)
+        if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+            local textChannel = TextChatService.TextChannels.RBXGeneral
+            textChannel:SendAsync(message)
+        else
+            game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All")
+        end
     end
-end 
+
+    SendChatMessage(message)  -- Fix: Call SendChatMessage
 end
 
 return Winxx
+

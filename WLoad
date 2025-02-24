@@ -4,4 +4,4 @@ function PrintMessage(message)
     print("Message: " .. message)
 end
 
-return MyLibrary
+return Wload

@@ -1,3 +1,8 @@
+
+-- This is the loadstring      local WLoad = loadstring(game:HttpGet("https://raw.githubusercontent.com/Winxty/Winxx/refs/heads/main/WLoad"))()
+
+
+
 local Wload = {}
 
 function Wload:PrintMessage(message)

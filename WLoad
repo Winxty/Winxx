@@ -17,6 +17,8 @@ print("command: FTLWT = Finds and prints the text you insert between the ()")
 print("command: Wm = Loads the Watermark")
 print("command: Wver = Literally just the version of Winxx")
 print("command: SayMessage = say the inserted text in chat")
+print("command: Safe = Spawn a safe part where u can stand on privately ")
+print("command: Loadbsc = Loads the needs for Winxx to work ")
 
 end
 
@@ -42,6 +44,7 @@ function Winxx:Safe(Position)
     safep.Name = "SafePart"
     safep.Position = Position
     safep.Transparency = 0.5
+    safep.Size = Vector3.new(50, 50, 50)
     safep.Parent = game.Workspace.Winxxfuncs
 
 

@@ -5,6 +5,60 @@
 
 local Wload = {}
 
+function Wload:Help()
+print("command: FTLWT = Finds and prints the text you insert between the ()")
+print("command: Wm = Loads the Watermark")
+print("command: Wver = Literally just the version of Winxx")
+
+end
+
+local Wver = "1,0,0"
+
+
+
+
+function Wload:FTLWT(targetText)
+
+    for _, obj in pairs(game.Players.LocalPlayer.PlayerGui:GetDescendants()) do
+        if obj:IsA("TextLabel") and obj.Text == targetText then
+            print("Found TextLabel with text '" .. targetText .. "' at: " .. obj:GetFullName())
+            -- Optionally: Do something with the found TextLabel
+            return obj  -- Returns the found TextLabel object
+        end
+    end
+    print("TextLabel with text '" .. targetText .. "' not found.")
+end
+
+
+
+
+function Wload:Wm()
+
+        local screenGui = Instance.new("ScreenGui")
+        screenGui.Parent = game.CoreGui
+        screenGui.Name = "Gift"
+    
+        local watermark = Instance.new("TextLabel")
+        watermark.Name = "WaterMark"
+        watermark.Parent = screenGui
+        watermark.TextColor3 = Color3.fromRGB(255, 255, 255)
+        watermark.TextTransparency = 0.7
+        watermark.Text = "[Winxx] Script by Winxx ofc"
+        watermark.AnchorPoint = Vector2.new(0.5, 0.5)
+        watermark.Font = Enum.Font.Gotham
+        watermark.BackgroundTransparency = 1
+        watermark.Position = UDim2.new(0.5, 0, 0.05, 0)
+        watermark.TextSize = 15
+        watermark.Size = UDim2.new(0, 469, 0, 30)
+    
+        local watermark1 = game.CoreGui.Gift.WaterMark
+        local player = game.Players.LocalPlaye
+
+end
+
+
+
+
 function Wload:PrintMessage(message)
     print("Message: " .. message)
 end

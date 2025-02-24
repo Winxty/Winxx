@@ -5,6 +5,12 @@
 
 local Winxx = {}
 
+function Winxx:Loadbsc()
+    local winxxfold = Instance.new("Folder")
+        winxxfold.Name = "Winxxfuncs"
+        winxxfold.Parent = game.Workspace
+end
+
 function Winxx:Help()
 print("all of the commands to work use ["Winxx:"] before them")
 print("command: FTLWT = Finds and prints the text you insert between the ()")
@@ -31,12 +37,19 @@ end
 
 
 
-function Winxx:Safe()
-
+function Winxx:Safe(Position)
     local safep = Instance.new("Part")
-    safep.Name = SafePart
-    safep.Position = Vector3.New(Vector3(1000,10000,1000)
+    safep.Name = "SafePart"
+    safep.Position = Position
     safep.Transparency = 0.5
+    safep.Parent = game.Workspace.Winxxfuncs
+
+
+    local pos = Instance.new("Value")
+    pos.Name = "SafePosition"
+    pos.Parent = game.Workspace.Winxxfuncs
+    pos.Value = Position
+end
 
 
 

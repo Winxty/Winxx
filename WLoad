@@ -32,7 +32,13 @@ end
 function Winxx:Safe(Position)
     local safep = Instance.new("Part")
     safep.Name = "SafePart"
-    safep.Position = Position
+
+    if type(Position) == "table" then
+        safep.Position = Vector3.new(Position[1], Position[2], Position[3])
+    else
+        safep.Position = Position
+    end
+
     safep.Transparency = 0.5
     safep.Size = Vector3.new(50, 50, 50)
     safep.Parent = game.Workspace.Winxxfuncs
@@ -42,6 +48,7 @@ function Winxx:Safe(Position)
     pos.Parent = game.Workspace.Winxxfuncs
     pos.Value = safep.Position
 end
+
 
 function Winxx:Wm()
     local screenGui = Instance.new("ScreenGui")

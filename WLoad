@@ -45,7 +45,7 @@ end
 
 function Winxx:Wm()
     local screenGui = Instance.new("ScreenGui")
-    screenGui.Parent = game.CoreGui
+    screenGui.Parent = game.Workspace.Winxxfuncs
     screenGui.Name = "Gift"
     
     local watermark = Instance.new("TextLabel")

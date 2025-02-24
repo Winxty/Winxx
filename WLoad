@@ -31,6 +31,16 @@ end
 
 
 
+function Winxx:Safe()
+
+    local safep = Instance.new("Part")
+    safep.Name = SafePart
+    safep.Position = Vector3.New(Vector3(1000,10000,1000)
+    safep.Transparency = 0.5
+
+
+
+
 
 function Winxx:Wm()
 

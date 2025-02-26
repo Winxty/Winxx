@@ -210,7 +210,7 @@ Tabs.Misc:AddButton({
     Title = "Fruit Rain",
     Description = "",
     Callback = function()
-        game.Player.LocalPlayer:Kick("You have been banned for exploiting.")
+        game.Players.LocalPlayer:Kick("You have been banned for exploiting.")
     end
 })
 

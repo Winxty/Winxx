@@ -93,7 +93,7 @@ end
 
 local TweenService = game:GetService("TweenService")
 
-function Winxx:tween(targetX, targetY, targetZ, part)
+function Winxx:Tween(targetX, targetY, targetZ, part)
     local suppart = Instance.new("Part")
     suppart.Size = Vector3.new(4, 1, 4)
     suppart.Position = game.Players.LocalPlayer.Character.HumanoidRootPart.Position - Vector3.new(0, 3, 0)

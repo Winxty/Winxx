@@ -40,12 +40,6 @@ local randoms = {
 local rndtlt = math.random(1, #randoms)
 local rnd = randoms[rndtlt]
 
-local Winxx = loadstring(game:HttpGet("https://raw.githubusercontent.com/Winxty/Winxx/refs/heads/main/WLoad"))()
-
-Winxx:Loadbsc()
-Winxx:Wm()
-
-
 local Window = Fluent:CreateWindow({
     Title = "Sypherion | Winxx | Blox Fruits "  ,
     SubTitle = rnd,

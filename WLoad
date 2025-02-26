@@ -15,7 +15,7 @@ function Winxx:Help()
     print("command: SayMessage = say the inserted text in chat")
     print("command: Safe = Spawn a safe part where u can stand on privately")
     print("command: Loadbsc = Loads the needs for Winxx to work")
-    print("command: Tween = Put the coords between the () and you will tween there )
+    print("command: Tween = Put the coords between the () and you will tween there. you might also have to add [ local TweenService = game:GetService("TweenService") ] )
 end
 
 local Wver = "1,0,0"

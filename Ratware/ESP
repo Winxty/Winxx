@@ -1,0 +1,25 @@
+local ui  = Instance.new("ScreenGui")
+ui.Parent = game.CoreGui
+ui.Name   = "Ratware"
+
+local wm                  = Instance.new("TextLabel")
+wm.Name                   = "Watermark"
+wm.Parent                 = ui
+wm.Text                   = "Ratware ESP"
+wm.Position               = UDim2.new(0, 60, 1, -50)
+wm.TextTransparency       = 0.5
+wm.BackgroundTransparency = 1
+wm.TextColor3             = Color3.fromRGB(255, 255, 255)
+
+
+local players = game.Players
+
+for i, v in pairs(players:GetChildren()) do
+    if v.Character then
+        
+        local hl = Instance.new("Highlight")
+        hl.Parent = v.Character
+        hl.FillColor = Color3.fromRGB(255, 255, 255)
+    end
+end
+ 

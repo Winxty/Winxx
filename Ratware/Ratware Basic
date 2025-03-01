@@ -1,0 +1,157 @@
+
+
+-- Startup
+
+local ui  = Instance.new("ScreenGui")
+ui.Parent = game.CoreGui
+ui.Name   = "Ratware"
+
+local function notify(Notification, Duration)
+
+    local mainui                  = Instance.new("TextLabel")
+    mainui.Name                   = "Notification" 
+    mainui.Parent                 = ui
+    mainui.Text                   = Notification
+    mainui.Size                   = UDim2.new(0, 1000, 0, 50)
+    mainui.Position               = UDim2.new(0.5, -500, 0, 900)
+    mainui.TextColor3             = Color3.fromRGB(255, 255, 255)
+    mainui.TextSize               = 18
+    mainui.TextTransparency       = 0  
+    mainui.TextStrokeTransparency = 0.8
+   
+        local cornerui = Instance.new("UICorner")
+        cornerui.Parent = mainui
+
+    wait(Duration)
+    mainui:Destroy()
+
+end
+
+
+
+local wm                  = Instance.new("TextLabel")
+wm.Name                   = "Watermark"
+wm.Parent                 = ui
+wm.Text                   = "Ratware basic script"
+wm.Position               = UDim2.new(0, 60, 1, -50)
+wm.TextTransparency       = 0.5
+wm.BackgroundTransparency = 1
+wm.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+
+
+
+
+
+-- Ui
+
+local frame2 = Instance.new("TextButton")
+frame2.Name = "WalkspeedChanger"
+frame2.Parent = ui
+frame2.Text = "Walkspeed Changer"
+frame2.Size = UDim2.new(0, 150, 0, 85)
+frame2.Position = UDim2.new(0.5, -850, 0.5, -150)
+
+local uicorn2 = Instance.new("UICorner")
+uicorn2.Parent = frame2
+
+
+local frame = Instance.new("TextButton")
+frame.Name = "JumpPowerChanger"
+frame.Parent = ui
+frame.Text = "JumpPower Changer"
+frame.Size = UDim2.new(0, 150, 0, 85)
+frame.Position = UDim2.new(0.5, -850, 0.5, -25)
+
+local uicorn = Instance.new("UICorner")
+uicorn.Parent = frame
+
+local nottoggle   = Instance.new("TextButton")
+nottoggle.Name     = "NotificationToggle"
+nottoggle.Parent   = ui
+nottoggle.Text     = "Disable Notifications"
+nottoggle.Size     = UDim2.new(0, 150, 0, 45)
+nottoggle.Position = UDim2.new(0.5, -850, 0.5, 125)
+
+local nottogglecorn = Instance.new("UICorner")
+nottogglecorn.Parent = nottoggle
+
+local Destroy    = Instance.new("TextButton")
+Destroy.Name     = "Destroy"
+Destroy.Parent   = ui
+Destroy.Text     = "Exit Ratware Basic"
+Destroy.Size     = UDim2.new(0, 150, 0, 45)
+Destroy.Position = UDim2.new(0.5, -850, 0.5, 225)
+
+local destroycorn = Instance.new("UICorner")
+    destroycorn.Parent = Destroy
+
+Destroy.MouseButton1Click:Connect(function()
+    warn("Destroyed rwbsc")
+    ui:Destroy()
+end)
+
+
+
+
+
+
+-- Functions
+
+local noti = true
+
+nottoggle.MouseButton1Click:Connect(function()
+
+    if noti then
+        noti = false
+        nottoggle.Text = "Enable Notifications"
+
+        for i,v in pairs(ui:GetChildren()) do
+            if v.Name == "Notification" then
+                v.Visible = false
+            end
+        end
+
+
+    else
+        noti = true
+        nottoggle.Text = "Disable Notifications"
+        for i,v in pairs(ui:GetChildren()) do
+            if v.Name == "Notification" then
+                v.Visible = true
+            end
+        end
+    end
+    
+end)
+
+local fast = false
+local leborn = false
+local char = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+
+frame2.MouseButton1Click:Connect(function()
+    fast = not fast
+    char.Humanoid.WalkSpeed = fast and 50 or 16
+
+    if noti then
+        notify("Speed: " .. char.Humanoid.WalkSpeed, 1.5) 
+    end
+end)
+
+frame.MouseButton1Click:Connect(function()
+    leborn = not leborn
+    char.Humanoid.JumpPower = leborn and 250 or 50
+    char.Humanoid.JumpHeight = leborn and 250 or 50
+
+    if noti then
+        notify("Jump " .. char.Humanoid.JumpPower, 1.5)  -- Display the jump power in the notification
+    end
+end)
+
+
+
+if noti then
+    notify("Loaded Ratware Basic", 5)
+    notify("Changelog: Added everything", 5)
+end
+

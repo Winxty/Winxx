@@ -1,0 +1,9 @@
+
+local script = nil
+
+
+  if script = "ESP" then
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/Winxty/Winxx/refs/heads/main/Ratware/ESP"))()
+  elseif script = "Basic" then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Winxty/Winxx/refs/heads/main/Ratware/Ratware%20Basic"))()
+end

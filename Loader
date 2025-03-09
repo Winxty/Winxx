@@ -2,5 +2,5 @@
 if game.PlaceId == 286090429 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Winxty/Winxx/refs/heads/main/Arsenal%20Sneeky"))()
 else
-    game.Player.LocalPlayer:Kick("Unsupported game lil bro. Lya fr owo")'
+    game.Player.LocalPlayer:Kick("Unsupported game lil bro. Lya fr owo")
 end

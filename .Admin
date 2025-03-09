@@ -1,0 +1,104 @@
+local Players = game:GetService("Players")
+local function Notify(Title, Text, Duration)
+    pcall(function()
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = Title,
+            Text = Text,
+            Duration = Duration,
+        })
+    end)
+end
+
+local display = game.Players.LocalPlayer.DisplayName
+
+Notify("Sypherion", "Welcome " .. display, 4)
+Notify("Type .cmds in chat for commands", "", 4)
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+
+local function onChat(message)
+    local command = string.split(message, " ")
+    local cmd = command[1]
+
+
+    if cmd == ".cmds" then
+        print(".goto [player] teleports u to the player")
+        print(".tweengoto [player] tweens u to the player")
+        print(".re resets ur character")
+        Notify("Check console", "", 4)
+    end
+    
+    if cmd == ".goto" then
+        if command[2] then
+            local targetPart = command[2]:lower()
+            for _, targetPlayer in pairs(Players:GetPlayers()) do
+                local usernameMatch = targetPlayer.Name:lower():sub(1, #targetPart) == targetPart
+                local displayNameMatch = targetPlayer.DisplayName:lower():sub(1, #targetPart) == targetPart
+                if usernameMatch or displayNameMatch then
+                    if targetPlayer.Character then
+                        local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+                        if targetRoot then
+                            LocalPlayer.Character:SetPrimaryPartCFrame(targetRoot.CFrame + Vector3.new(0, 5, 0))
+                            return
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    if cmd == ".tweengoto" then
+        if command[2] then
+            local targetPart = command[2]:lower()
+            for _, targetPlayer in pairs(Players:GetPlayers()) do
+                local usernameMatch = targetPlayer.Name:lower():sub(1, #targetPart) == targetPart
+                local displayNameMatch = targetPlayer.DisplayName:lower():sub(1, #targetPart) == targetPart
+                if usernameMatch or displayNameMatch then
+                    if targetPlayer.Character then
+                        local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+                        if targetRoot then
+                            local startPos = LocalPlayer.Character.HumanoidRootPart.Position
+                            local targetPos = targetRoot.Position + Vector3.new(0, 5, 0)
+                            local tweenInfo = TweenInfo.new(
+                                1,
+                                Enum.EasingStyle.Linear,
+                                Enum.EasingDirection.Out
+                            )
+                            local tweenGoal = {CFrame = CFrame.new(targetPos)}
+                            local tween = TweenService:Create(LocalPlayer.Character.HumanoidRootPart, tweenInfo, tweenGoal)
+                            tween:Play()
+                            tween.Completed:Wait()
+                            return
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    if cmd == ".re" then
+        local lastpos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Position
+    end
+
+
+    if cmd == ".Walkspeed" or cmd == ".ws" then
+        local walkspeed = tonumber(command[2]) or 16
+        if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = walkspeed
+        end
+    end
+    
+    
+
+
+
+
+
+end
+
+
+
+
+LocalPlayer.Chatted:Connect(onChat)

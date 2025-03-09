@@ -1,0 +1,216 @@
+
+
+
+print("Press E to Aimbot")
+
+
+
+
+
+
+
+
+local executor = identifyexecutor()
+
+    if not executor then
+        game.Players.LocalPlayer:Kick("Sypherion is not supported in this executor yet")
+    end
+
+if SYPHERION == true then
+    warn("Sypherion is already running on: " .. executor)
+    return
+end
+
+Rep = cloneref(game:GetService("ReplicatedStorage"))
+Players = cloneref(game:GetService("Players"))
+
+
+pcall(function() getgenv().SYPHERION = true end)
+
+
+
+
+
+-- Weapon Config
+
+local weapons = game.ReplicatedStorage.Weapons
+
+for i, v in pairs(weapons:GetChildren()) do
+                    if v.FireRate then
+                        v.FireRate.Value = 0.03
+                    else
+                        print(v .. " Doesn't have FireRate Value or its just retarded 😨")
+                    end
+            end
+        end
+    end
+})
+
+
+
+for i, v in pairs(weapons:GetChildren()) do
+                    if v.ReloadTime then
+                        v.ReloadTime.Value = 0.01
+                    else
+                        print(v .. " Doesn't have Reload Time Value or its just retarded 😨")
+                    end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Aimbot
+local Players = game:GetService("Players")
+local Camera = workspace.CurrentCamera
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+local UserInputService = game:GetService("UserInputService")
+
+local AimbotEnabled = false  -- This will track if the aimbot is enabled or not
+local AimbotKey = Enum.KeyCode.Q  -- The keybind to activate/deactivate the aimbot (Q in this case)
+local LockOnSpeed = 0.1  -- Smoothing factor for camera lock-on
+local FovRadius = 200  -- The radius of the FOV circle
+
+-- Drawing FOV circle on screen
+local FovCircle = Drawing.new("Circle")
+FovCircle.Radius = FovRadius
+FovCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+FovCircle.Color = Color3.fromRGB(255, 0, 0)  -- Red color
+FovCircle.Thickness = 2
+FovCircle.Filled = false
+
+local function FindClosestEnemyToCrosshair()
+    local closestDistance = math.huge
+    local closestPlayer = nil
+
+    -- Center of the screen (crosshair)
+    local screenCenter = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
+            -- Team check: Only target players not on the same team as the local player
+            if player.Team ~= LocalPlayer.Team then
+                local headPosition = player.Character.Head.Position
+                local screenPosition, onScreen = Camera:WorldToViewportPoint(headPosition)
+
+                if onScreen then
+                    -- Calculate distance from the screen center to the target (crosshair)
+                    local distance = (Vector2.new(screenPosition.X, screenPosition.Y) - screenCenter).Magnitude
+                    if distance < closestDistance then
+                        closestDistance = distance
+                        closestPlayer = player
+                    end
+                end
+            end
+        end
+    end
+
+    return closestPlayer
+end
+
+local function AimAtTarget(target)
+    if target and target.Character and target.Character:FindFirstChild("Head") then
+        local headPosition = target.Character.Head.Position
+        local cameraPosition = Camera.CFrame.Position
+
+        -- Calculate the direction to the target
+        local directionToTarget = (headPosition - cameraPosition).unit
+
+        -- Calculate the target CFrame
+        local newCFrame = CFrame.lookAt(cameraPosition, headPosition)
+
+        -- Smoothly interpolate the camera’s CFrame to lock on the target
+        Camera.CFrame = Camera.CFrame:Lerp(newCFrame, LockOnSpeed)
+    end
+end
+
+-- Keybind listener to toggle aimbot on/off
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard then
+        if input.KeyCode == AimbotKey then
+            AimbotEnabled = not AimbotEnabled  -- Toggle aimbot on or off
+        end
+    end
+end)
+
+-- Run the aimbot every frame if it's enabled
+game:GetService("RunService").RenderStepped:Connect(function()
+    -- Update FOV circle position
+    FovCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+
+    if AimbotEnabled then
+        local enemy = FindClosestEnemyToCrosshair()
+        if enemy then
+            AimAtTarget(enemy)
+        end
+    end
+end)
+
+
+
+
+
+
+
+
+-- ESP
+
+
+local Players = game:GetService("Players")
+local Camera = workspace.CurrentCamera
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+local function CreateESPBox(Player)
+    local Box = Drawing.new("Square")
+    Box.Thickness = 1  -- Make this number lower to make the lines thinner
+    Box.Color = Color3.fromRGB(255, 0, 0)
+    Box.Filled = false
+
+    local function Update()
+        if Player and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            local Root = Player.Character.HumanoidRootPart
+
+            -- Get head and foot positions
+            local HeadPos, OnScreen1 = Camera:WorldToViewportPoint(Root.Position + Vector3.new(0, 3, 0))
+            local FootPos, OnScreen2 = Camera:WorldToViewportPoint(Root.Position - Vector3.new(0, 3, 0))
+
+            if OnScreen1 and OnScreen2 then
+                local BoxHeight = math.abs(FootPos.Y - HeadPos.Y)
+                local BoxWidth = BoxHeight * 0.4  -- Adjust width
+
+                Box.Size = Vector2.new(BoxWidth, BoxHeight)
+                Box.Position = Vector2.new(HeadPos.X - BoxWidth / 2, HeadPos.Y)
+                Box.Visible = true
+            else
+                Box.Visible = false
+            end
+        else
+            Box.Visible = false
+        end
+    end
+
+    RunService.RenderStepped:Connect(Update)
+end
+
+for _, Player in pairs(Players:GetPlayers()) do
+    if Player ~= LocalPlayer then
+        CreateESPBox(Player)
+    end
+end
+
+Players.PlayerAdded:Connect(function(Player)
+    if Player ~= LocalPlayer then
+        CreateESPBox(Player)
+    end
+end)

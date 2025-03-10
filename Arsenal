@@ -1,0 +1,739 @@
+-- Startupies
+
+-- local Options
+
+local executor = identifyexecutor()
+
+    if not executor then
+        game.Players.LocalPlayer:Kick("Sypherion is not supported in this executor yet")
+    end
+
+if SYPHERION == true then
+    warn("Sypherion is already running on: " .. executor)
+    return
+end
+
+Rep = cloneref(game:GetService("ReplicatedStorage"))
+Players = cloneref(game:GetService("Players"))
+
+
+pcall(function() getgenv().SYPHERION = true end)
+
+local ttpos = Vector3.new(0, 0, 0)
+
+local function getEnemy()
+    local players = game:GetService("Players")
+    local myteam = players.LocalPlayer.Team
+
+    local enemyPlayers = {}
+
+
+    for i, v in pairs(players:GetChildren()) do
+        if v.Team ~= myteam and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+            table.insert(enemyPlayers, v.Character.HumanoidRootPart.CFrame.Position)
+        end
+    end
+
+
+    if #enemyPlayers > 0 then
+        local randomIndex = math.random(1, #enemyPlayers)
+        return enemyPlayers[randomIndex]
+    end
+
+    return nil
+end
+
+
+
+
+
+local repo = 'https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/'
+
+local Library = loadstring(game:HttpGet(repo .. 'Library.lua'))()
+local ThemeManager = loadstring(game:HttpGet(repo .. 'addons/ThemeManager.lua'))()
+local SaveManager = loadstring(game:HttpGet(repo .. 'addons/SaveManager.lua'))()
+
+local Window = Library:CreateWindow({
+    Title = 'Sypherion | Arsenal',
+    Center = true,
+    AutoShow = true,
+    TabPadding = 8
+})
+
+local Tabs = {
+    Main = Window:AddTab('Main'),
+    Aim = Window:AddTab("Aim Bot"),
+    Client = Window:AddTab("Client Mods"),
+    gm = Window:AddTab("Gun Mods"),
+    dev = Window:AddTab("Dev"),
+    ['UI Settings'] = Window:AddTab('UI Settings'),
+}
+
+-- Main Tab
+
+local MainBox = Tabs.Main:AddLeftGroupbox('Main')
+local ExploitsBox = Tabs.Main:AddRightGroupbox("Exploits")
+
+-- Aimbot tab
+
+local Aimbottogglebox = Tabs.Aim:AddLeftGroupbox("Aimbot")
+local Aimbotconfigbox = Tabs.Aim:AddRightGroupbox("Config")
+
+-- Client Tab
+
+local Characterbox = Tabs.Client:AddLeftGroupbox("Character")
+local ESPtogglebox = Tabs.Client:AddRightGroupbox("ESP")
+local EnemiesBox = Tabs.Client:AddRightGroupbox("Enemies")
+local IYbox = Tabs.Client:AddLeftGroupbox("Infinite Yield")
+
+-- GM tab
+local AmmoBox = Tabs.gm:AddLeftGroupbox("Ammo")
+local EQbox = Tabs.gm:AddLeftGroupbox("Equip Time")
+local Relbox = Tabs.gm:AddRightGroupbox("Reload Time")
+local FireRateBox = Tabs.gm:AddRightGroupbox("Firerate")
+
+-- Dev Tab
+local PassBox = Tabs.dev:AddLeftGroupbox("Password")
+
+
+-- Main Tab
+
+-- Main Box
+MainBox:AddLabel(' ')
+MainBox:AddLabel('Welcome to sypherion')
+MainBox:AddLabel(' ')
+MainBox:AddLabel('The Best Universal Script Out\nThere')
+MainBox:AddLabel(' ')
+
+MainBox:AddDivider()
+
+local MyButton = MainBox:AddButton('Join Discord', function()
+    setclipboard("https://dsc.gg/ratware")
+end)
+
+-- Exploits Box
+
+local killingenemy = false
+
+ExploitsBox:AddToggle('MyToggle', {
+    Text = 'Auto Kill When Gold Knife',
+    Default = false,
+    Tooltip = 'Might teleport to a tm8',
+
+    Callback = function(State)
+
+        while State and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Gun") do
+            local gun = game.Players.LocalPlayer.Character.Gun
+
+
+            if gun.Boop.Value == "Golden Gun" then
+                local enemyPos = getEnemy()
+
+                if enemyPos then
+
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(enemyPos)
+                end
+            else
+
+                break
+            end
+
+
+            wait(0.5)
+        end
+    end
+})
+
+
+
+-- Aimbot
+
+local Players = game:GetService("Players")
+local Camera = workspace.CurrentCamera
+local LocalPlayer = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+
+local AimbotEnabled = false
+local AimbotToggleAllowed = false
+local LockOnSpeed = 0.5
+local AimBone = "Head"
+local AimbotToggleKey = Enum.KeyCode.E
+local function FindClosestEnemyToCrosshair()
+    local closestDistance = math.huge
+    local closestPlayer = nil
+    local screenCenter = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild(AimBone) then
+            if player.Team ~= LocalPlayer.Team then
+                local targetPosition = player.Character[AimBone].Position
+                local screenPosition, onScreen = Camera:WorldToViewportPoint(targetPosition)
+                if onScreen then
+                    local distance = (Vector2.new(screenPosition.X, screenPosition.Y) - screenCenter).Magnitude
+                    if distance < closestDistance then
+                        closestDistance = distance
+                        closestPlayer = player
+                    end
+                end
+            end
+        end
+    end
+    return closestPlayer
+end
+
+local function AimAtTarget(target)
+    if target and target.Character and target.Character:FindFirstChild(AimBone) then
+        local targetPosition = target.Character[AimBone].Position
+        local cameraPosition = Camera.CFrame.Position
+        local newCFrame = CFrame.lookAt(cameraPosition, targetPosition)
+        Camera.CFrame = Camera.CFrame:Lerp(newCFrame, LockOnSpeed)
+    end
+end
+
+
+
+Aimbottogglebox:AddToggle("AimbotToggle", {
+    Text = "Enable Aimbot Keybind",
+    Default = false,
+    Callback = function(Value)
+        AimbotToggleAllowed = Value
+        if not Value then
+            AimbotEnabled = false
+        end
+    end
+})
+
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == AimbotToggleKey then
+        if AimbotToggleAllowed then
+            AimbotEnabled = not AimbotEnabled
+        end
+    end
+end)
+
+
+game:GetService("RunService").RenderStepped:Connect(function()
+    if AimbotEnabled then
+        local enemy = FindClosestEnemyToCrosshair()
+        if enemy then   
+            AimAtTarget(enemy)
+        end
+    end
+end)
+
+
+
+Aimbottogglebox:AddLabel('Aimbot Toggle Key Is E')
+
+Aimbotconfigbox:AddSlider('AimbotSmoothness', {
+    Text = 'Aimbot Legitimacy',
+    Min = 0.1,
+    Max = 1,
+    Default = 0.5,
+    Rounding = 2,
+    Callback = function(value)
+        LockOnSpeed = value
+    end
+})
+
+Aimbotconfigbox:AddDropdown('AimbotBone', {
+    Text = 'Aimbot Bone Target',
+    Values = {'Head', 'Torso', 'HumanoidRootPart', 'Left Arm', 'Right Arm', 'Left Leg', 'Right Leg'},
+    Default = 'Head',
+
+    Tooltip = "Chooses where to hit",
+    Callback = function(selectedBone)
+        AimBone = selectedBone
+    end
+})
+
+
+
+
+
+
+
+-- Player Tab
+
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+local speedMultiplier = 30
+local isLooping = false
+local connection
+
+
+local function isPlayerDeployed()
+    local character = Players.LocalPlayer.Character
+    if character and character:FindFirstChild("IsAPlayer") then
+
+        return true
+    else
+
+        return false
+    end
+end
+
+
+Characterbox:AddToggle('SpeedToggle', {
+    Text = 'Loop WalkSpeed',
+    Default = false,
+
+    Callback = function(Toggled)
+        isLooping = Toggled
+
+        if isLooping then
+            
+            connection = RunService.RenderStepped:Connect(function()
+                local character = Players.LocalPlayer.Character
+                if character and isPlayerDeployed() then
+                    local humanoid = character:FindFirstChildOfClass("Humanoid")
+                    if humanoid then
+
+                        humanoid.WalkSpeed = speedMultiplier
+                        humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+                            humanoid.WalkSpeed = speedMultiplier
+                        end)
+                    else
+                        
+                    end
+                else
+                    
+                end
+            end)
+        else
+            
+            if connection then
+                connection:Disconnect()
+                connection = nil
+            end
+        end
+    end
+})
+
+
+Characterbox:AddSlider('MySlider', {
+    Text = 'WalkSpeed Multiplier',
+    Default = 30,
+    Min = 30,
+    Max = 150,
+    Rounding = 2,
+    Compact = false,
+
+    Callback = function(Value)
+        
+        speedMultiplier = Value
+    end
+})
+
+
+
+
+
+
+
+
+
+
+-- Esp
+
+
+local MyButton = ESPtogglebox:AddButton('Enable Esp', function()
+
+    local Players = game:GetService("Players")
+local Camera = workspace.CurrentCamera
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+local function CreateESPBox(Player)
+    local Box = Drawing.new("Square")
+    Box.Thickness = 1
+    Box.Color = Color3.fromRGB(255, 255, 255)
+    Box.Filled = false
+
+    local function Update()
+        if Player and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            local Root = Player.Character.HumanoidRootPart
+
+
+            local HeadPos, OnScreen1 = Camera:WorldToViewportPoint(Root.Position + Vector3.new(0, 3, 0))
+            local FootPos, OnScreen2 = Camera:WorldToViewportPoint(Root.Position - Vector3.new(0, 3, 0))
+
+            if OnScreen1 and OnScreen2 then
+                local BoxHeight = math.abs(FootPos.Y - HeadPos.Y)
+                local BoxWidth = BoxHeight * 0.6
+
+                Box.Size = Vector2.new(BoxWidth, BoxHeight)
+                Box.Position = Vector2.new(HeadPos.X - BoxWidth / 2, HeadPos.Y)
+                Box.Visible = true
+            else
+                Box.Visible = false
+            end
+        else
+            Box.Visible = false
+        end
+    end
+
+    RunService.RenderStepped:Connect(Update)
+end
+
+for _, Player in pairs(Players:GetPlayers()) do
+    if Player ~= LocalPlayer then
+        CreateESPBox(Player)
+    end
+end
+
+Players.PlayerAdded:Connect(function(Player)
+    if Player ~= LocalPlayer then
+        CreateESPBox(Player)
+    end
+end)
+    
+end)
+
+
+
+
+
+-- Characters box
+
+
+
+
+
+
+
+-- Infinite yield
+
+local MyButton = IYbox:AddButton('Load', function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+end)
+
+
+-- Gun mods tab
+
+local customfirerate = false
+local weapons = Rep.Weapons
+local savedFireRate = nil
+local ammo = Players.LocalPlayer.PlayerGui.GUI.Client.Variables.ammocount
+
+-- Ammo
+
+
+
+local getammo = false
+
+AmmoBox:AddToggle('MyToggle', {
+    Text = 'Inf ammo',
+    Default = false,
+    Tooltip = 'Loop gives ammo ',
+    Callback = function(Value)
+        if Value then
+
+            getammo = true
+
+                while getammo do
+
+                    ammo.Value = 999
+
+                        wait(0.4)
+
+                end
+    else
+
+            getammo = false
+
+            ammo.Value = 0
+
+        end
+    end
+})
+
+
+
+
+
+
+
+
+
+-- FireRate
+
+
+FireRateBox:AddToggle('MyToggle', {
+    Text = 'Enable Firerate',
+    Default = false,
+    Tooltip = '',
+    Callback = function(Value)
+
+        if Value then
+
+        for i, v in pairs(weapons:GetChildren()) do
+            savedFireRate = v.FireRate.Value
+        end
+            customfirerate = true
+       
+        else
+
+            for i, v in pairs(weapons:GetChildren()) do
+                v.FireRate = savedFireRate
+            end
+
+
+
+
+            customfirerate = false
+        end
+    
+    end
+})
+
+
+local originalFireRates = {}
+local customFireRate = false
+
+FireRateBox:AddToggle("FireRateToggle", {
+    Text = "Override FireRate",
+    Default = false,
+    Callback = function(Value)
+        customFireRate = Value
+        
+        if not customFireRate then
+
+            for i, v in pairs(weapons:GetChildren()) do
+                if v.FireRate and originalFireRates[v] then
+                    v.FireRate.Value = originalFireRates[v]
+                end
+            end
+        end
+    end
+})
+
+FireRateBox:AddSlider("MySlider", {
+    Text = "FireRate",
+    Default = 0.1,
+    Min = 0.05,
+    Max = 5,
+    Rounding = 1,
+    Compact = false,
+
+    Callback = function(Value)
+        if customFireRate then
+            for i, v in pairs(weapons:GetChildren()) do
+                if v.FireRate then
+                    -- Store the original FireRate before modifying it
+                    if originalFireRates[v] == nil then
+                        originalFireRates[v] = v.FireRate.Value
+                    end
+                    v.FireRate.Value = Value
+                else
+                    print(v .. " Doesn't have FireRate Value or its just retarded 😨")
+                end
+            end
+        end
+    end
+})
+
+
+local MyButton = FireRateBox:AddButton({
+    Text = 'Very Fast FireRate',
+    Func = function()
+
+        for i, v in pairs(weapons:GetChildren()) do
+            if v.FireRate then
+                v.FireRate.Value = 0.03
+            end
+        end
+        
+    end,
+    DoubleClick = true,
+    Tooltip = 'This might lag your client'
+})
+
+
+-- Equip time
+
+EQbox:AddSlider("MySlider", {
+    Text = "Equip time",
+    Default = 0.5,
+    Min = 0.01,
+    Max = 5,
+    Rounding = 3,
+    Compact = false,
+
+    Callback = function(Value)
+            for i, v in pairs(weapons:GetChildren()) do
+                if v.EquipTime then
+                    
+
+                    v.EquipTime.Value = Value
+                else
+                    
+                end
+            end
+    end
+})
+
+
+local MyButton = EQbox:AddButton({
+    Text = 'Very Fast Equip time',
+    Func = function()
+
+        for i, v in pairs(weapons:GetChildren()) do
+            if v.FireRate then
+                v.FireRate.Value = 0.03
+            end
+        end
+        
+    end,
+    DoubleClick = true,
+    Tooltip = 'Very cool cus its negative'
+})
+
+
+
+
+
+-- Reload time
+
+
+local originalReloadTimes = {}
+local reloadOverrideEnabled = false
+
+Relbox:AddToggle("ReloadOverrideToggle", {
+    Text = "Override Reload Time",
+    Default = false,
+    Callback = function(Value)
+        reloadOverrideEnabled = Value
+        
+        if not reloadOverrideEnabled then
+            
+            for i, v in pairs(weapons:GetChildren()) do
+                if v.ReloadTime and originalReloadTimes[v] then
+                    v.ReloadTime.Value = originalReloadTimes[v]
+                end
+            end
+        end
+    end
+})
+
+Relbox:AddSlider("MySlider", {
+    Text = "Reload time",
+    Default = 0.1,
+    Min = 0,
+    Max = 5,
+    Rounding = 1,
+    Compact = false,
+
+    Callback = function(Value)
+        if reloadOverrideEnabled then
+            for i, v in pairs(weapons:GetChildren()) do
+                if v.ReloadTime then
+                    -- Store the original reload time before modifying it
+                    if originalReloadTimes[v] == nil then
+                        originalReloadTimes[v] = v.ReloadTime.Value
+                    end
+                    v.ReloadTime.Value = Value
+                else
+                    print(v .. " Doesn't have Reload Time Value or its just retarded 😨")
+                end
+            end
+        end
+    end
+})
+
+
+
+-- Dev tab
+
+
+PassBox:AddInput('MyTextbox', {
+    Default = '',
+    Numeric = false,
+    Finished = false,
+
+    Text = '',
+    Tooltip = 'I Swear Password isnt ILikeMen:3',
+
+    Placeholder = 'Password...',
+    
+})
+
+Options.MyTextbox:OnChanged(function()
+    if Options.MyTextbox.Value == "AwesomePassword" then
+        local DevBox = Tabs.dev:AddLeftGroupbox("Dev")
+        local debugs = Tabs.dev:AddRightGroupbox("Debugs")
+
+        local MyButton = debugs:AddButton('Button', function()
+
+            local gun = game.Players.LocalPlayer.Character.Gun
+
+            if gun.Boop.Value ~= "Golden Gun" then
+                local enemyPos = getEnemy()
+
+                if enemyPos then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(enemyPos)
+                end
+            end
+        end)
+
+    end
+end)
+
+Options.MyTextbox:OnChanged(function()
+    if Options.MyTextbox.Value == "ILikeMen:3" then
+        Library:Notify("i Told u it wasnt ILikeMen:3", 5)
+    end
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Library:SetWatermarkVisibility(true)
+
+Library:Notify("Welcome to Sypherion [BETA]", 5)
+
+Library:Notify("Lmk if u find any bugs", 5)
+
+Library:SetWatermark('Sypherion')
+
+local MenuGroup = Tabs['UI Settings']:AddLeftGroupbox('Menu')
+
+MenuGroup:AddButton('Unload', function() Library:Unload() end)
+MenuGroup:AddLabel('Menu bind'):AddKeyPicker('MenuKeybind', { Default = 'K', NoUI = true, Text = 'Menu keybind' })
+
+Library.ToggleKeybind = Options.MenuKeybind
+
+ThemeManager:SetLibrary(Library)
+SaveManager:SetLibrary(Library)
+
+SaveManager:IgnoreThemeSettings()
+
+SaveManager:SetIgnoreIndexes({ 'MenuKeybind' })
+
+ThemeManager:SetFolder('Sypherion')
+SaveManager:SetFolder('Syperion/arsenal')
+
+SaveManager:BuildConfigSection(Tabs['UI Settings'])
+
+ThemeManager:ApplyToTab(Tabs['UI Settings'])
+
+SaveManager:LoadAutoloadConfig()
+
+
+
+

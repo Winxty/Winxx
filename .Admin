@@ -1,4 +1,26 @@
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+
+local executor = identifyexecutor()
+
+    if not executor then
+        game.Players.LocalPlayer:Kick("Sypherion is not supported in this executor yet")
+    end
+
+if SYPHERION == true then
+    warn("Sypherion is already running on: " .. executor)
+    return
+end
+
+Rep = cloneref(game:GetService("ReplicatedStorage"))
+Players = cloneref(game:GetService("Players"))
+
+
+pcall(function() getgenv().SYPHERION = true end)
+
+
+
 local function Notify(Title, Text, Duration)
     pcall(function()
         game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -9,28 +31,64 @@ local function Notify(Title, Text, Duration)
     end)
 end
 
+
+        local letters = {
+            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+            "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+            "!", "\"", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=", ">", "?", "@", "[", "\\", "]", "^", "_", "`", "{", "|", "}", "~"
+        }
+
+
+
+
 local display = game.Players.LocalPlayer.DisplayName
+local key = "."
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Notify("Sypherion", "Welcome " .. display, 4)
 Notify("Type .cmds in chat for commands", "", 4)
 
-local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
-local LocalPlayer = Players.LocalPlayer
+--commands
 
 local function onChat(message)
+
     local command = string.split(message, " ")
-    local cmd = command[1]
+    local cmd = command[1]:lower()
 
-
+ 
     if cmd == ".cmds" then
-        print(".goto [player] teleports u to the player")
-        print(".tweengoto [player] tweens u to the player")
-        print(".re resets ur character")
+        print("goto [player] teleports u to the player")
+        print("tweengoto / tgoto [player] tweens u to the player")
+        print("re resets ur character")
+        print("Cbring / cb [player] brings the player")
+        print("walkspeed / ws / speed sets your walkspeed")
+        print("status sends status")
+        print("debug sends advanced status in console")
+        print("notify / timer send a timer on the chosen settings arg1 = title arg2 = text arg3 = waittime (seconds)")
+        print("test sends a test msg")
+        print("newkey lets u set a new key")
         Notify("Check console", "", 4)
     end
-    
-    if cmd == ".goto" then
+
+
+    if cmd == key .. "goto" then
         if command[2] then
             local targetPart = command[2]:lower()
             for _, targetPlayer in pairs(Players:GetPlayers()) do
@@ -49,7 +107,8 @@ local function onChat(message)
         end
     end
 
-    if cmd == ".tweengoto" then
+
+    if cmd == key .. "tweengoto" or cmd == key .. "tgoto" then
         if command[2] then
             local targetPart = command[2]:lower()
             for _, targetPlayer in pairs(Players:GetPlayers()) do
@@ -78,17 +137,79 @@ local function onChat(message)
         end
     end
 
-    if cmd == ".re" then
+
+    if cmd == key .. "re" or cmd == key .. "reset" then
         local lastpos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Position
+        game.Players.LocalPlayer.Character:BreakJoints()
+        wait(game.Players.RespawnTime)
+        if game.Players.LocalPlayer.Character.HumanoidRootPart then
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(lastpos)
+        end
     end
 
 
-    if cmd == ".Walkspeed" or cmd == ".ws" then
-        local walkspeed = tonumber(command[2]) or 16
+    if cmd == key .. "walkspeed" or cmd == key .. "ws" or cmd == key .. "speed" then
+        local walkspeed = tonumber(command[2])
+        if not walkspeed then
+            walkspeed = 16
+        end
         if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
             game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = walkspeed
         end
     end
+
+    if cmd == key .. "cbring" or cmd == key .. "cb" then
+        local targetName = command[2]
+        if targetName then
+
+            local targetPlayer = game.Players:FindFirstChild(targetName)
+            if targetPlayer and targetPlayer.Character then
+                local mypos = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+                local targetpos = Vector3.new(mypos.X + 5, mypos.Y, mypos.Z + 5)
+    
+
+                targetPlayer.Character:SetPrimaryPartCFrame(CFrame.new(targetpos))
+            end
+        end
+    end
+
+    if cmd == key .. "notify" or cmd == key .. "timer" then
+        local Title = command[2]
+        local Text = command[3]
+        local wait = command[4]
+
+        wait(wait)
+
+        pcall(function()
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = Title,
+                Text = Text,
+                Duration = 10,
+            })
+        end)
+        
+    end
+    
+
+    if cmd == key .. "status" then
+        Notify("Sypherion", "Sypherion is loaded", 5)
+        Notify("Sypherion", "If you think any commands are bugged do .debug", 5)
+    end
+
+    if cmd == ".debug" then
+        Notify("Sypherion", "Didnt fix this yet", 5)
+    end
+
+
+    if cmd == key .. "test" then
+        Notify("Test", "", 3)
+    end
+
+    if cmd == key .. "newkey" then
+        local newkey = tostring(command[2])
+        key = newkey
+        Notify("New key", key, 5)
+    end
     
     
 
@@ -96,9 +217,11 @@ local function onChat(message)
 
 
 
-end
 
 
 
 
+
+
+end    
 LocalPlayer.Chatted:Connect(onChat)

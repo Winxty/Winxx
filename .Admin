@@ -43,185 +43,208 @@ end
 
 
 local display = game.Players.LocalPlayer.DisplayName
-local key = "."
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 Notify("Sypherion", "Welcome " .. display, 4)
-Notify("Type .cmds in chat for commands", "", 4)
+Notify("Type cmds for commands", "", 4)
 
 --commands
 
-local function onChat(message)
+local players = game:GetService("Players")
+local runservice = game:GetService("RunService")
+local tweenService = game:GetService("TweenService")
+local localPlayer = players.LocalPlayer
 
-    local command = string.split(message, " ")
-    local cmd = command[1]:lower()
+-- Create the UI only if it doesn't exist, now using CoreGui
+local screenGui = game:GetService("CoreGui"):FindFirstChild("CommandUI")
+if not screenGui then
+    screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "CommandUI"
+    screenGui.Parent = game:GetService("CoreGui")
+end
 
- 
-    if cmd == ".cmds" then
-        print("goto [player] teleports u to the player")
-        print("tweengoto / tgoto [player] tweens u to the player")
-        print("re resets ur character")
-        print("Cbring / cb [player] brings the player")
+local commandBox = Instance.new("TextBox")
+commandBox.Parent = screenGui
+commandBox.Size = UDim2.new(0, 300, 0, 50)
+commandBox.Position = UDim2.new(0.5, -150, 0.9, 0)  -- Centered bottom
+commandBox.PlaceholderText = "Enter Command..."
+commandBox.Text = ""
+commandBox.ClearTextOnFocus = false
+commandBox.BackgroundColor3 = Color3.new(0, 0, 0)
+commandBox.TextColor3 = Color3.new(1, 1, 1)
+commandBox.TextScaled = true
+
+local players = game:GetService("Players")
+
+local function findPlayersByPartialName(name)
+    local matches = {}
+    name = name:lower()
+    
+
+    for _, player in ipairs(players:GetPlayers()) do
+        if player.Name:lower():find(name) or player.DisplayName:lower():find(name) then
+            table.insert(matches, player)
+        end
+    end
+    
+
+    return matches
+end
+
+
+commandBox.FocusLost:Connect(function(enterPressed)
+    if not enterPressed then return end  -- Only run if player presses Enter
+
+    local text = commandBox.Text
+    commandBox.Text = ""  -- Clear after running command
+    local args = text:split(" ")
+    local cmd = args[1]:lower()
+
+    -- List of Commands
+    if cmd == "cmds" then
+        print("goto [player] teleports you to the player")
+        print("re / reset resets your character")
         print("walkspeed / ws / speed sets your walkspeed")
-        print("status sends status")
-        print("debug sends advanced status in console")
-        print("notify / timer send a timer on the chosen settings arg1 = title arg2 = text arg3 = waittime (seconds)")
         print("test sends a test msg")
-        print("newkey lets u set a new key")
         Notify("Check console", "", 4)
     end
 
 
-    if cmd == key .. "goto" then
-        if command[2] then
-            local targetPart = command[2]:lower()
-            for _, targetPlayer in pairs(Players:GetPlayers()) do
-                local usernameMatch = targetPlayer.Name:lower():sub(1, #targetPart) == targetPart
-                local displayNameMatch = targetPlayer.DisplayName:lower():sub(1, #targetPart) == targetPart
-                if usernameMatch or displayNameMatch then
-                    if targetPlayer.Character then
-                        local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-                        if targetRoot then
-                            LocalPlayer.Character:SetPrimaryPartCFrame(targetRoot.CFrame + Vector3.new(0, 5, 0))
-                            return
-                        end
-                    end
-                end
-            end
+
+    if cmd == "re" or cmd == "reset" then
+        local lastpos = localPlayer.Character.HumanoidRootPart.CFrame.Position
+        localPlayer.Character:BreakJoints()
+        wait(players.RespawnTime)
+        if localPlayer.Character.HumanoidRootPart then
+            localPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(lastpos)
         end
     end
 
 
-    if cmd == key .. "tweengoto" or cmd == key .. "tgoto" then
-        if command[2] then
-            local targetPart = command[2]:lower()
-            for _, targetPlayer in pairs(Players:GetPlayers()) do
-                local usernameMatch = targetPlayer.Name:lower():sub(1, #targetPart) == targetPart
-                local displayNameMatch = targetPlayer.DisplayName:lower():sub(1, #targetPart) == targetPart
-                if usernameMatch or displayNameMatch then
-                    if targetPlayer.Character then
-                        local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-                        if targetRoot then
-                            local startPos = LocalPlayer.Character.HumanoidRootPart.Position
-                            local targetPos = targetRoot.Position + Vector3.new(0, 5, 0)
-                            local tweenInfo = TweenInfo.new(
-                                1,
-                                Enum.EasingStyle.Linear,
-                                Enum.EasingDirection.Out
-                            )
-                            local tweenGoal = {CFrame = CFrame.new(targetPos)}
-                            local tween = TweenService:Create(LocalPlayer.Character.HumanoidRootPart, tweenInfo, tweenGoal)
-                            tween:Play()
-                            tween.Completed:Wait()
-                            return
-                        end
-                    end
-                end
-            end
-        end
-    end
-
-
-    if cmd == key .. "re" or cmd == key .. "reset" then
-        local lastpos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Position
-        game.Players.LocalPlayer.Character:BreakJoints()
-        wait(game.Players.RespawnTime)
-        if game.Players.LocalPlayer.Character.HumanoidRootPart then
-            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(lastpos)
-        end
-    end
-
-
-    if cmd == key .. "walkspeed" or cmd == key .. "ws" or cmd == key .. "speed" then
-        local walkspeed = tonumber(command[2])
+    if cmd == "walkspeed" or cmd == "ws" or cmd == "speed" then
+        local walkspeed = tonumber(args[2])
         if not walkspeed then
             walkspeed = 16
         end
-        if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
-            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = walkspeed
+        if localPlayer.Character and localPlayer.Character:FindFirstChild("Humanoid") then
+            localPlayer.Character.Humanoid.WalkSpeed = walkspeed
         end
     end
 
-    if cmd == key .. "cbring" or cmd == key .. "cb" then
-        local targetName = command[2]
-        if targetName then
-
-            local targetPlayer = game.Players:FindFirstChild(targetName)
-            if targetPlayer and targetPlayer.Character then
-                local mypos = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
-                local targetpos = Vector3.new(mypos.X + 5, mypos.Y, mypos.Z + 5)
-    
-
-                targetPlayer.Character:SetPrimaryPartCFrame(CFrame.new(targetpos))
-            end
-        end
-    end
-
-    if cmd == key .. "notify" or cmd == key .. "timer" then
-        local Title = command[2]
-        local Text = command[3]
-        local wait = command[4]
-
-        wait(wait)
-
-        pcall(function()
-            game:GetService("StarterGui"):SetCore("SendNotification", {
-                Title = Title,
-                Text = Text,
-                Duration = 10,
-            })
-        end)
-        
-    end
-    
-
-    if cmd == key .. "status" then
-        Notify("Sypherion", "Sypherion is loaded", 5)
-        Notify("Sypherion", "If you think any commands are bugged do .debug", 5)
-    end
-
-    if cmd == ".debug" then
-        Notify("Sypherion", "Didnt fix this yet", 5)
-    end
 
 
-    if cmd == key .. "test" then
+
+    if cmd == "test" then
         Notify("Test", "", 3)
     end
 
-    if cmd == key .. "newkey" then
-        local newkey = tostring(command[2])
-        key = newkey
-        Notify("New key", key, 5)
+    if cmd == "sit" then
+        players.LocalPlayer.Character.Humanoid.Sit = true
     end
+
+    if cmd == "goto" then
+        local targetFind = args[2]
     
+        local run = game:GetService("RunService")
     
 
+        local matches = findPlayersByPartialName(targetFind)
+    
 
+        if #matches > 0 then
 
+            local target = matches[1]
+            
+            if target.Character then
+                local targetHumanoidRootPart = target.Character:FindFirstChild("HumanoidRootPart")
+                local myHumanoidRootPart = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            
+                if targetHumanoidRootPart and myHumanoidRootPart then
 
+                    local targetPosition = targetHumanoidRootPart.Position
+                    local directionBehind = (targetHumanoidRootPart.CFrame.LookVector * -0.8)
+                    local newPosition = targetPosition + directionBehind
 
+                    myHumanoidRootPart.CFrame = CFrame.new(newPosition)
+                end
+            end
+        else
+            print("No player found matching: " .. targetFind)
+        end
+    end
 
+    if cmd == "jump" then
+        game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+    end
 
+    if cmd == "headless" then
+        local char = players.LocalPlayer.Character
+            char.Head.Transparency = 1
+            char.Head.face.Transparency = 1
+    end
 
+    if cmd == "noaccessories" or cmd == "noacc" then
+        
+        local player = game.Players.LocalPlayer
+            if player then
+                local char = player.Character
+                    for i, v in pairs(char:GetChildren()) do
+                        if v:IsA("Accessory") then
+                            v:Destroy()
+                        end
+                    end
+            end
 
+    end
 
+    if cmd == "nolag" or cmd == "antilag" or cmd == "boostfps" then
 
-end    
-LocalPlayer.Chatted:Connect(onChat)
+        local workspace = game.Workspace
+            for i, parts in pairs(workspace:GetDescendants()) do
+                if parts.Material ~= Enum.Material.SmoothPlastic then
+                    parts.Material = Enum.Material.SmoothPlastic
+            end
+        
+    end
+        local players = game:GetService("Players")
+            for i, player in pairs(players:GetChldren()) do
+                if player.Character.Head.face then
+                    player.Character.Head.face:Destroy()
+                end
+            end
+end
+
+if cmd == "view" then
+    local target = args[2]
+    local matches = findPlayersByPartialName(target)
+
+    if matches and #matches > 0 then
+        local player = matches[1]
+
+        if player and player.Character then
+            local camera = game.Workspace.Camera
+            camera.CameraSubject = player.Character
+        else
+            print("Player not found or has no character")
+        end
+    else
+        print("No matching players found")
+    end
+end
+
+if cmd == "unview" then
+    game.Workspace.Camera.CameraSubject = game.Players.LocalPlayer.Character
+end
+
+if cmd == "fov" then
+    local value = args[2]
+    game.Workspace.Camera.FieldOfView = value
+end
+
+if cmd == "leave" then
+    game:Shutdown()
+end
+
+    
+
+end)

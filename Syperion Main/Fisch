@@ -32,7 +32,7 @@ local core = game:GetService("CoreGui")
 
 -- Load key
 
-local script_key = ""
+
 local validkeystring = "Ѕурнєяіои"
 
 

@@ -1,1 +1,121 @@
 
+local function gr() -- get rod
+    local bp = game.Players.LocalPlayer.Backpack
+    local char = game.Players.LocalPlayer.Character
+
+    -- Search in Backpack first
+    for i, v in pairs(bp:GetChildren()) do
+        if v.Name:find("Rod") then
+            return v.Name
+        end
+    end
+
+    -- If not in Backpack, search in Character
+    if char then
+        for i, v in pairs(char:GetChildren()) do
+            if v.Name:find("Rod") then
+                return v.Name
+            end
+        end
+    end
+
+    return nil
+end
+
+local rodName = gr()
+print(rodName or "No rod found")
+
+local core = game:GetService("CoreGui")
+
+
+
+
+-- Load key
+
+local script_key = ""
+local validkeystring = "Ѕурнєяіои"
+
+
+function check_key(input_key)
+
+    if string.find(input_key, validkeystring) then
+        print("script_key = " .. script_key)
+
+    else
+
+        game.Players.LocalPlayer:Kick("Invalid key! \nGet key in Discord \nhttps://dsc.gg/ratware\n")
+    end
+end
+
+
+check_key(script_key)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+
+local Window = Fluent:CreateWindow({
+    Title = "Fluent " .. Fluent.Version,
+    SubTitle = "by dawid",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true, -- The blur may be detectable, setting this to false disables blur entirely
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
+})
+
+--Fluent provides Lucide Icons https://lucide.dev/icons/ for the tabs, icons are optional
+local Tabs = {
+    Main = Window:AddTab({ Title = "Main", Icon = "" }),
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+}
+
+local Options = Fluent.Options
+
+do
+
+
+
+
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+
+
+SaveManager:IgnoreThemeSettings()
+
+
+SaveManager:SetIgnoreIndexes({})
+
+
+InterfaceManager:SetFolder("FluentScriptHub")
+SaveManager:SetFolder("FluentScriptHub/specific-game")
+
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
+
+
+Window:SelectTab(1)
+
+Fluent:Notify({
+    Title = "Fluent",
+    Content = "The script has been loaded.",
+    Duration = 8
+})
+
+SaveManager:LoadAutoloadConfig()
+
+end

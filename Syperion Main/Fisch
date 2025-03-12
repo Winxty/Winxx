@@ -44,6 +44,8 @@ function check_key(input_key)
     else
 
         game.Players.LocalPlayer:Kick("Invalid key! \nGet key in Discord \nhttps://dsc.gg/ratware\n")
+        setclipboard("https://dsc.gg/ratware")
+        break
     end
 end
 

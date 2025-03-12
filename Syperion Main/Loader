@@ -1,0 +1,83 @@
+
+
+
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+
+local Window = Fluent:CreateWindow({
+    Title = "Sypherion | Key-System",
+    SubTitle = "Sorry For not having Luarmor",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true, -- The blur may be detectable, setting this to false disables blur entirely
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
+})
+
+
+local Tabs = {
+    Main = Window:AddTab({ Title = "Main", Icon = "" }),
+}
+
+local Options = Fluent.Options
+
+do
+
+    Tabs.Main:AddParagraph({
+        Title = "Info",
+        Content = "Sorry for this key-system\n its the best i can do for now\ni cant really afford luarmor and allat\nIm still a godamn child and i dont have a job so sorry 🥰🙏"
+    })
+
+
+
+
+    local Input = Tabs.Main:AddInput("Input", {
+        Title = "Enter Key",
+        Default = "",
+        Placeholder = "Enter Key...",
+        Numeric = false,
+        Finished = true,
+        Callback = function(key)
+    
+            local validkeystring = "Ѕурнєяіои"
+    
+
+            if string.find(key, validkeystring) then
+                print("Access granted")
+                Fluent:Destroy()
+            else
+                game.Players.LocalPlayer:Kick("Invalid key! \nGet key in Discord \nhttps://dsc.gg/ratware\n")
+                setclipboard("https://dsc.gg/ratware")
+                Fluent:Destroy()
+            end
+    
+        end
+    })
+
+    Tabs.Main:AddButton({
+        Title = "Get Key",
+        Description = "In discord untill i can afford luarmor :c",
+        Callback = function()
+
+            Fluent:Notify({
+                Title = "Sypherion",
+                Content = "Copied to clipboard",
+                Duration = 8
+            })
+            
+
+            setclipboard("https://dsc.gg/ratware")
+
+        end
+    })
+
+Fluent:Notify({
+    Title = "Sypherion",
+    Content = "Key-System",
+    Duration = 8
+})
+
+Window:SelectTab(1)
+
+end

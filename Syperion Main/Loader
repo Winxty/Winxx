@@ -55,22 +55,48 @@ do
         end
     })
 
-    Tabs.Main:AddButton({
-        Title = "Get Key",
-        Description = "In discord untill i can afford luarmor :c",
-        Callback = function()
 
-            Fluent:Notify({
-                Title = "Sypherion",
-                Content = "Copied to clipboard",
-                Duration = 8
-            })
-            
+Tabs.Main:AddButton({
+    Title = "Get Key",
+    Description = "In discord until I can afford Luarmor :c",
+    Callback = function()
+        local HttpService = game:GetService("HttpService")
+        local discordInvite = "https://discord.com/invite/4ku99RaHf4"
 
-            setclipboard("https://dsc.gg/ratware")
+        local function handleInvite()
+            if HttpService.HttpEnabled then
+                local success, response = pcall(function()
+                    return HttpService:GetAsync(discordInvite)
+                end)
 
+                if success then
+                    Fluent:Notify({
+                        Title = "Sypherion",
+                        Content = "Successfully invited to Discord. Check your Discord.",
+                        Duration = 8
+                    })
+                else
+                    Fluent:Notify({
+                        Title = "Sypherion",
+                        Content = "Failed to retrieve the invite. Please try again later.",
+                        Duration = 8
+                    })
+                end
+            else
+                Fluent:Notify({
+                    Title = "Sypherion",
+                    Content = "Invite link copied to clipboard.",
+                    Duration = 8
+                })
+                setclipboard(discordInvite)
+            end
         end
-    })
+
+        handleInvite()
+    end
+})
+
+
 
 Fluent:Notify({
     Title = "Sypherion",

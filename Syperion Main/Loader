@@ -17,7 +17,7 @@ local Window = Fluent:CreateWindow({
 
 
 local Tabs = {
-    Main = Window:AddTab({ Title = "Main", Icon = "" }),
+    Main = Window:AddTab({ Title = "Key", Icon = "key-round" }),
 }
 
 local Options = Fluent.Options
@@ -44,7 +44,20 @@ do
     
 
             if string.find(key, validkeystring) then
-                print("Access granted")
+
+
+                if game.PlaceId == 286090429 then
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/Winxty/Winxx/refs/heads/main/Arsenal"))()
+                else
+                    game.Players.LocalPlayer:Kick("Unsupported game")
+                end
+                
+
+                    
+
+
+
+
                 Fluent:Destroy()
             else
                 game.Players.LocalPlayer:Kick("Invalid key! \nGet key in Discord \nhttps://dsc.gg/ratware\n")

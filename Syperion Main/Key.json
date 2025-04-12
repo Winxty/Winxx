@@ -1,0 +1,6 @@
+{
+  "accounts": {
+    "KEY-1234": {"userId": 12345678, "name": "Winxx"},
+    "TEST-9999": {"userId": 87654321, "name": "Tester"}
+  }
+}
